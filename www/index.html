@@ -1,39 +1,104 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
-"http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<!DOCTYPE>
+<html xmlns="http://www.w3.org/1999/html">
 <head>
-   <meta http-equiv="Content-type" content="text/html;charset=utf-8">
-   <title>Embedded Sql Sample Application</title>
-<!-- include the next line to use phonegap javascript functions -->
-<script type="text/javascript" charset="utf-8" src="cordova-2.5.0.js"></script> 
-<!-- include jquery functions -->
-<script type="text/javascript" charset="utf-8" src="jquery.min.js"></script>
-<!-- main scripts used -->
-<script type="text/javascript" charset="utf-8" src="js/database.js"></script>
-<script>
-	// add action listeners.
-	$(document).ready(function(){
-  $("#btnAdd").click(function(){
-	  AddValueToDB();
-  });
-  $("#btnDelete").click(function(){
-	  deleteRecords();
-	    $(".textArea").val("");
-	  });
-});
-</script>
+    <title>Sample Application</title>
+    <link rel="stylesheet" href="css/my.css" />
+   
+    <!-- include for phone gap java script functions -->
+	<script type="text/javascript" charset="utf-8" src="cordova-2.5.0.js"></script> 
+    <script src="js/index.js"></script> 
+    <script type="text/javascript" src="js/my.js"></script>
+    <script src="js/jquery.min.js"></script>
+    <script src="js/jquery.mobile-1.2.1.min.js"></script>
+   
+    <script type="text/javascript">
+
+        function appReady(){
+            queryDatabase();
+        }
+        
+// our jQuery page-loaded handler
+        $(document).ready(function(){
+            $("#get-name").click(function(){
+                handleClick();
+            });
+
+            $("#ajax_error").ajaxError(function(e, jqxhr, settings, exception) {
+                $(this).text( "Error requesting page " + settings.url);
+            });
+        });
+
+// next 7 lines are to support PhoneGap initialization
+        document.addEventListener("deviceready", appReady, false);
+
+        $( document ).bind( "mobileinit", function() {
+            // Make your jQuery Mobile framework configuration changes here!
+            alert("TEST: Init phonegap success...");
+            $.mobile.allowCrossDomainPages = true;
+        });
+
+// called when button is clicked
+        function handleClick(){            
+            var url = 'http://applications.scienceontheweb.net/insert.php';
+            $.ajax({
+                  type: 'GET',
+                  url: url,
+                  contentType: "application/json",
+                  dataType: 'jsonp',
+                  data: {first: $("#firstname").val(), last: $("#lastname").val() },
+                  crossDomain: true,
+                  success: function(res) {
+  				queryDatabase();
+  				},
+                  error: function(e) {
+                      console.log(e.message);
+                  },
+                  complete: function(data) {
+                      console.log("Complete");
+                  }
+              });
+        }
+        
+        function queryDatabase(){
+        	/*$("#resultsdiv").html(res);
+            console.dir(res);
+        	alert("DEBUG: Got to display Restult");*/
+        	//$("#resultsdiv").html("Hello, " + res.firstname + " " + res.lastname);
+            //console.dir(res.fullname);
+            
+            var url = 'http://applications.scienceontheweb.net/query.php';
+            $.ajax({
+                type: 'GET',
+                url: url,
+                contentType: "application/json",
+                dataType: 'jsonp',
+                crossDomain: true,
+                success: function(res) {
+				$("#resultsdiv").html(res);
+				},
+                error: function(e) {
+                    console.log(e.message);
+                },
+                complete: function(data) {
+                    console.log("Complete");
+                }
+            });
+        }
+    </script>
 </head>
-<body onload="onBodyLoad()" style="text-align:center;">
+<body style="text-align:center;">
 <h1>WebSQL</h1>
 <h5>Add some names to the database.</h5>
-<input class= "textArea" id="txFirstName" type="text" placeholder="FirstName">
-<input class= "textArea" id="txLastName" type="text" placeholder="Last Name">
+<input class= "textArea" id="firstname" type="text" placeholder="FirstName">
+<input class= "textArea" id="lastname" type="text" placeholder="Last Name">
 <br><br>
-<input id="btnAdd" type="button" value="Add record">
-<input id="btnDelete" type="button" value="Delete Records"> 
+<input id="get-name" type="button" value="Add record">
+<!-- <input id="btnDelete" type="button" value="Delete Records">  -->
 <br>
 <br>
 <span style="font-weight:bold;">Currently stored values:</span>
 <span id="lbUsers"></span>
+    <div id="resultsdiv"></div>
+    <div id='ajax_error'></div>
 </body>
-</html> 
+</html>
