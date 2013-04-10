@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Embedded Sql Sample Application</title>
+<!-- include the next line to use phonegap javascript functions -->
+<script type="text/javascript" charset="utf-8" src="cordova-2.5.0.js"></script> 
+<!-- include jquery functions -->
+<script type="text/javascript" charset="utf-8" src="jquery.min.js"></script>
+
+<script>
+function loadXMLDoc()
+{
+var xmlhttp;
+xmlhttp=new XMLHttpRequest();
+if(xmlhttp == null){
+  xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+}
+
+//xmlhttp.open("GET","applications.scienceontheweb.net/ajax_info.txt", true);
+xmlhttp.open("GET","ajax_info.txt", true);
+
+xmlhttp.onload = function(){
+    $('#lbUsers').append('<br>');
+	  $('#lbUsers').append(xmlhttp.responseText);
+	 
+  }
+//xmlhttp.open("GET","applications.scienceontheweb.net/hello%20world.php", true);
+
+xmlhttp.send();
+}
+
+function fromConnection(){
+	var url = "applications.scienceontheweb.net/hello%20world.php";
+	
+	$.get(url, function(data){
+		  alert("Data: " + data);
+		});
+}
+
+function callback(){
+	alert("Done!");
+}
+</script>
+</head>
+<body style="text-align:center;">
+<h1>WebSQL</h1>
+<h5>Add some names to the database.</h5>
+<input class= "textArea" id="txFirstName" type="text" placeholder="FirstName">
+<input class= "textArea" id="txLastName" type="text" placeholder="Last Name">
+<br><br>
+<input id="btnAdd" type="button" value="Add record" onclick="fromConnection()">
+<input id="btnDelete" type="button" value="Delete Records"> 
+<br>
+<br>
+<span style="font-weight:bold;">Currently stored values:</span>
+<span id="lbUsers"></span>
+</body>
+</html>
